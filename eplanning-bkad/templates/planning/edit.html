@@ -1,0 +1,57 @@
+<!-- templates/planning/edit.html -->
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Edit Perencanaan: {{ plan.nama_program }}</h3>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+            {{ form.nama_program.label(class="form-label") }}
+            {{ form.nama_program(class="form-control") }}
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    {{ form.pagu_anggaran.label(class="form-label") }}
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        {{ form.pagu_anggaran(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    {{ form.realisasi.label(class="form-label") }}
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        {{ form.realisasi(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    {{ form.satuan_kerja.label(class="form-label") }}
+                    {{ form.satuan_kerja(class="form-control") }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    {{ form.tahun.label(class="form-label") }}
+                    {{ form.tahun(class="form-control", type="number") }}
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex">
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <a href="{{ url_for('detail_planning', plan_id=plan.id) }}" class="btn btn-secondary">Batal</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+<!-- templates/dashboard.html -->
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Selamat Datang, {{ current_user.nama_lengkap }}!</h3>
+    <p>Anda login sebagai <strong>{{ current_user.role|title }}</strong>.</p>
+
+    <!-- Statistik -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Total Perencanaan</h5>
+                    <h2>{{ total }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Terverifikasi</h5>
+                    <h2>{{ verified }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5>Draft</h5>
+                    <h2>{{ total - verified }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafik Aktivitas Harian (Hanya Admin) -->
+    {% if current_user.role == 'admin' %}
+    <div class="card mt-4">
+        <div class="card-header bg-dark text-white">
+            <h5>📊 Aktivitas Sistem 7 Hari Terakhir</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="dailyActivityChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Perbaiki URL Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('dailyActivityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ labels|tojson }},
+                datasets: [{
+                    label: 'Jumlah Aktivitas',
+                    data: {{ counts|tojson }},
+                    backgroundColor: '#0d47a1',
+                    borderColor: '#0d3a80',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+    {% endif %}
+
+    <!-- Tombol Aksi -->
+    <div class="mt-4">
+        <a href="{{ url_for('create_planning') }}" class="btn btn-primary btn-lg">+ Buat Perencanaan</a>
+        <a href="{{ url_for('planning_list') }}" class="btn btn-outline-secondary">Lihat Semua</a>
+    </div>
+</div>
+
+<div class="row text-center mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5>Total Perencanaan</h5>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5>Terverifikasi</h5>
+                <h2>{{ verified }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5>Persentase Terverifikasi</h5>
+                <h2>{{ percentage }}%</h2>
+                <!-- Progress Bar (Opsional) -->
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-light text-dark" role="progressbar"
+                         style="width: {{ percentage }}%;" aria-valuenow="{{ percentage }}"
+                         aria-valuemin="0" aria-valuemax="100">
+                        {{ percentage }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

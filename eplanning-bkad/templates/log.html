@@ -1,0 +1,99 @@
+<!-- templates/log.html -->
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>📋 Log Aktivitas Sistem</h3>
+    <p class="text-muted">Catatan semua tindakan verifikasi dan perubahan data</p>
+
+    <!-- Form Filter -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label for="start_date" class="form-label">Dari Tanggal</label>
+            <input type="date" class="form-control" name="start_date" value="{{ request.args.get('start_date', '') }}">
+        </div>
+        <div class="col-md-3">
+            <label for="end_date" class="form-label">Sampai Tanggal</label>
+            <input type="date" class="form-control" name="end_date" value="{{ request.args.get('end_date', '') }}">
+        </div>
+        <div class="col-md-3">
+            <label for="user_id" class="form-label">Pengguna</label>
+            <select class="form-select" name="user_id">
+                <option value="">Semua Pengguna</option>
+                {% for u in users %}
+                <option value="{{ u.id }}" {% if request.args.get('user_id', '') == u.id|string %}selected{% endif %}>
+                    {{ u.nama_lengkap }} ({{ u.username }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="aksi" class="form-label">Jenis Aksi</label>
+            <select class="form-select" name="aksi">
+                <option value="">Semua Aksi</option>
+                <option value="verify" {% if request.args.get('aksi') == 'verify' %}selected{% endif %}>Verifikasi</option>
+                <option value="create" {% if request.args.get('aksi') == 'create' %}selected{% endif %}>Buat</option>
+                <option value="edit" {% if request.args.get('aksi') == 'edit' %}selected{% endif %}>Edit</option>
+                <option value="delete" {% if request.args.get('aksi') == 'delete' %}selected{% endif %}>Hapus</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="search" class="form-label">Pencarian (Program, Keterangan)</label>
+            <input type="text" class="form-control" name="search" placeholder="Cari nama program..." value="{{ request.args.get('search', '') }}">
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary me-2">Filter</button>
+            <a href="{{ url_for('view_log') }}" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <!-- Tabel Log -->
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Waktu</th>
+                <th>User</th>
+                <th>Aksi</th>
+                <th>Target</th>
+                <th>Keterangan</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.timestamp.strftime('%d-%m-%Y %H:%M') }}</td>
+                <td>{{ log.user.nama_lengkap }}</td>
+                <td>
+                    {% if log.aksi == 'verify' %}
+                        <span class="badge bg-success">Verifikasi</span>
+                    {% elif log.aksi == 'create' %}
+                        <span class="badge bg-primary">Buat</span>
+                    {% elif log.aksi == 'edit' %}
+                        <span class="badge bg-warning text-dark">Edit</span>
+                    {% elif log.aksi == 'delete' %}
+                        <span class="badge bg-danger">Hapus</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ log.aksi|title }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ log.target }}</td>
+                <td>{{ log.keterangan }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">Tidak ada data log.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="d-grid gap-2 d-md-flex mb-3">
+    <a href="{{ url_for('export_log_excel') }}" class="btn btn-success">
+        📥 Export ke Excel
+    </a>
+    <a href="{{ url_for('view_log') }}" class="btn btn-secondary">
+        🔁 Reset Filter
+    </a>
+	<a href="{{ url_for('planning_list') }}" class="btn btn-secondary">← Kembali</a>
+</div>
+{% endblock %}

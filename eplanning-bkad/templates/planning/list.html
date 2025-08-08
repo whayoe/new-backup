@@ -1,0 +1,59 @@
+<!-- templates/planning/list.html -->
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Daftar Perencanaan Saya</h3>
+    <a href="{{ url_for('create_planning') }}" class="btn btn-success mb-3">+ Tambah Baru</a>
+	<a href="{{ url_for('export_planning_excel') }}" class="btn btn-outline-success">
+        📥 Export ke Excel
+    </a>
+
+    {% if plans %}
+    <table class="table table-striped table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>Program</th>
+                <th>Pagu Anggaran</th>
+                <th>Realisasi</th>
+                <th>Satuan Kerja</th>
+                <th>Tahun</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in plans %}
+            <tr>
+                <td>{{ p.nama_program }}</td>
+                <td>Rp {{ '%.2f' % p.pagu_anggaran }}</td>
+                <td>Rp {{ '%.2f' % p.realisasi }}</td>
+                <td>{{ p.satuan_kerja }}</td>
+                <td>{{ p.tahun }}</td>
+                <td>
+                    {% if p.status == 'Draft' %}
+                        <span class="badge bg-warning text-dark">Draft</span>
+                    {% elif p.status == 'Diverifikasi' %}
+                        <span class="badge bg-success">Diverifikasi</span>
+                    {% else %}
+                        <span class="badge bg-danger">Ditolak</span>
+                    {% endif %}
+                </td>
+                <td>
+    <a href="{{ url_for('detail_planning', plan_id=p.id) }}" class="btn btn-sm btn-outline-primary">Lihat</a>
+	<a href="{{ url_for('verify_planning', plan_id=p.id) }}" 
+       class="btn btn-sm btn-success" 
+       onclick="return confirm('Yakin ingin verifikasi perencanaan ini?')">
+        ✅ Verifikasi
+    </a>
+	
+</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">Belum ada data perencanaan.</div>
+    {% endif %}
+</div>
+{% endblock %}

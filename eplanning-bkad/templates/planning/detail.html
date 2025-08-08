@@ -1,0 +1,71 @@
+<!-- templates/planning/detail.html -->
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Detail Perencanaan</h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tr>
+                    <th width="25%">Nama Program</th>
+                    <td>{{ plan.nama_program }}</td>
+                </tr>
+                <tr>
+                    <th>Pagu Anggaran</th>
+                    <td><strong>Rp {{ '%.2f' % plan.pagu_anggaran }}</strong></td>
+                </tr>
+                <tr>
+                    <th>Realisasi</th>
+                    <td><span class="badge bg-success">Rp {{ '%.2f' % plan.realisasi }}</span></td>
+                </tr>
+                <tr>
+                    <th>Satuan Kerja</th>
+                    <td>{{ plan.satuan_kerja }}</td>
+                </tr>
+                <tr>
+                    <th>Tahun</th>
+                    <td>{{ plan.tahun }}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        {% if plan.status == 'Draft' %}
+                            <span class="badge bg-warning text-dark">Draft</span>
+                        {% elif plan.status == 'Diverifikasi' %}
+                            <span class="badge bg-success">Diverifikasi</span>
+                        {% else %}
+                            <span class="badge bg-danger">Ditolak</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Dibuat Oleh</th>
+                    <td>{{ plan.user.nama_lengkap }} ({{ plan.user.username }})</td>
+                </tr>
+                <tr>
+                    <th>Tanggal Dibuat</th>
+                    <td>{{ plan.created_at.strftime('%d %B %Y, %H:%M') }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{{ url_for('planning_list') }}" class="btn btn-secondary">← Kembali ke Daftar</a>
+        {% if current_user.role == 'admin' %}
+            <!-- templates/planning/detail.html -->
+<a href="{{ url_for('edit_planning', plan_id=plan.id) }}" class="btn btn-primary">✏️ Edit</a>
+
+<form action="{{ url_for('delete_planning', plan_id=plan.id) }}" method="post" style="display: inline;">
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus perencanaan ini?')">
+        🗑️ Hapus
+    </button>
+</form>
+
+<a href="{{ url_for('planning_list') }}" class="btn btn-secondary">← Kembali</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
