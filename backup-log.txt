@@ -328,3 +328,14 @@ Traceback (most recent call last):
     return codecs.charmap_encode(input,self.errors,encoding_table)[0]
            ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f4c5' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "F:\DOKUMEN\BACKUP\backup.py", line 56, in <module>
+    backup()
+    ~~~~~~^^
+  File "F:\DOKUMEN\BACKUP\backup.py", line 19, in backup
+    print(f"\U0001f4c5 Mulai backup: {datetime.datetime.now()}")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f4c5' in position 0: character maps to <undefined>
